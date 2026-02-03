@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XU HANXI | 許涵茜 - Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-gray: #1a1a1a;
+            --text-gray: #666666;
+            --light-gray: #e5e5e5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-black);
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+        
+        .serif {
+            font-family: 'Noto Serif SC', serif;
+        }
+        
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        
+        .cursor-dot {
+            width: 5px;
+            height: 5px;
+            background-color: white;
+        }
+        
+        .cursor-outline {
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        .cursor-outline.hover {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: white;
+        }
+        
+        /* Noise Texture */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Text Reveal Animation */
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal-text.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Image Hover Effect */
+        .img-container {
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .img-container img {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .img-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        .img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.5rem;
+        }
+        
+        .img-container:hover .img-overlay {
+            opacity: 1;
+        }
+        
+        /* Navigation */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: white;
+            transform: translateX(-101%);
+            transition: transform 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            transform: translateX(0);
+        }
+        
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 1px solid #333;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 0.5rem;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        /* Scroll Progress */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 1px;
+            background: white;
+            z-index: 9999;
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        /* Award Card */
+        .award-card {
+            border: 1px solid #333;
+            transition: all 0.3s;
+        }
+        
+        .award-card:hover {
+            border-color: #666;
+            transform: translateY(-2px);
+        }
+        
+        /* Hide cursor on mobile */
+        @media (pointer: coarse) {
+            .cursor-dot, .cursor-outline {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-white selection:text-black">
+    <div class="noise"></div>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 mix-blend-difference text-white px-6 py-6 md:px-12 flex justify-between items-center">
+        <a href="#hero" class="text-sm tracking-[0.2em] font-medium hover:opacity-70 transition-opacity">XU HANXI</a>
+        
+        <div class="hidden md:flex gap-8 text-xs tracking-widest">
+            <a href="#about" class="nav-link">ABOUT</a>
+            <a href="#experience" class="nav-link">EXPERIENCE</a>
+            <a href="#awards" class="nav-link">AWARDS</a>
+            <a href="#portfolio" class="nav-link">PORTFOLIO</a>
+            <a href="#contact" class="nav-link">CONTACT</a>
+        </div>
+        
+        <button class="md:hidden text-white" onclick="toggleMenu()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+    </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu fixed inset-0 bg-black z-40 flex flex-col justify-center items-center gap-8 md:hidden">
+        <button class="absolute top-6 right-6 text-white" onclick="toggleMenu()">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <a href="#about" class="text-2xl serif tracking-widest" onclick="toggleMenu()">ABOUT</a>
+        <a href="#experience" class="text-2xl serif tracking-widest" onclick="toggleMenu()">EXPERIENCE</a>
+        <a href="#awards" class="text-2xl serif tracking-widest" onclick="toggleMenu()">AWARDS</a>
+        <a href="#portfolio" class="text-2xl serif tracking-widest" onclick="toggleMenu()">PORTFOLIO</a>
+        <a href="#contact" class="text-2xl serif tracking-widest" onclick="toggleMenu()">CONTACT</a>
+    </div>
+    
+    <!-- Hero Section -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center px-6 md:px-12 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-gray-800 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-gray-700 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto w-full relative z-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div class="reveal-text">
+                        <p class="text-xs tracking-[0.3em] text-gray-400 mb-4">JEWELRY DESIGNER & ARTIST</p>
+                        <h1 class="text-5xl md:text-7xl lg:text-8xl serif font-light leading-tight">
+                            許涵茜<br>
+                            <span class="text-3xl md:text-4xl lg:text-5xl text-gray-500">XU HANXI</span>
+                        </h1>
+                    </div>
+                    
+                    <div class="reveal-text delay-100">
+                        <p class="text-sm md:text-base text-gray-400 max-w-md leading-relaxed">
+                            Let the past have the future.<br>
+                            讓過去擁有未來。
+                        </p>
+                    </div>
+                    
+                    <div class="reveal-text delay-200 flex gap-4">
+                        <a href="#portfolio" class="px-6 py-3 border border-white text-xs tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+                            VIEW WORKS
+                        </a>
+                        <a href="#contact" class="px-6 py-3 text-xs tracking-widest text-gray-400 hover:text-white transition-colors">
+                            CONTACT →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="reveal-text delay-300 relative">
+                    <div class="aspect-[3/4] bg-gray-900 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1000&auto=format&fit=crop" 
+                             alt="Abstract Jewelry" 
+                             class="w-full h-full object-cover grayscale opacity-80 hover:opacity-100 transition-opacity duration-500">
+                    </div>
+                    <div class="absolute -bottom-4 -right-4 text-xs text-gray-500 tracking-widest">
+                        EST. 2001
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-8 left-6 md:left-12 text-xs text-gray-600 tracking-widest animate-pulse">
+            SCROLL TO EXPLORE
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="py-24 md:py-32 px-6 md:px-12 bg-neutral-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-12 gap-12">
+                <div class="md:col-span-4">
+                    <h2 class="text-xs tracking-[0.3em] text-gray-500 mb-4 reveal-text">ABOUT</h2>
+                    <div class="w-12 h-px bg-white mb-8 reveal-text"></div>
+                </div>
+                
+                <div class="md:col-span-8 space-y-8">
+                    <div class="reveal-text">
+                        <h3 class="text-2xl md:text-3xl serif font-light leading-relaxed mb-6">
+                            珠寶設計師 / 金工藝術家<br>
+                            <span class="text-gray-500 text-lg">Jewelry Designer & Metalwork Artist</span>
+                        </h3>
+                        <p class="text-gray-400 leading-relaxed max-w-2xl">
+                            畢業於台灣輔仁大學應用美術系金工組，專注於當代珠寶設計與金屬工藝創作。
+                            作品融合傳統工藝與現代設計語彙，探索材質、形式與敘事的可能性。
+                            擅長 Rhino 3D 建模、蠟雕、琺瑯、鍛敲等多種金工技法，同時具備手繪與數位繪圖能力。
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 reveal-text">
+                        <div class="border-t border-gray-800 pt-4">
+                            <p class="text-2xl serif mb-1">2019-2023</p>
+                            <p class="text-xs text-gray-500 tracking-wider">輔仁大學應用美術系</p>
+                        </div>
+                        <div class="border-t border-gray-800 pt-4">
+                            <p class="text-2xl serif mb-1">2023</p>
+                            <p class="text-xs text-gray-500 tracking-wider">台灣珠寶設計師協會會員</p>
+                        </div>
+                        <div class="border-t border-gray-800 pt-4">
+                            <p class="text-2xl serif mb-1">86/100</p>
+                            <p class="text-xs text-gray-500 tracking-wider">學業平均成績</p>
+                        </div>
+                        <div class="border-t border-gray-800 pt-4">
+                            <p class="text-2xl serif mb-1">IELTS 6.5</p>
+                            <p class="text-xs text-gray-500 tracking-wider">英語能力</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-8 reveal-text">
+                        <h4 class="text-xs tracking-widest text-gray-500 mb-4">SKILLS</h4>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">RHINO 3D</span>
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">金工鍛敲</span>
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">琺瑯工藝</span>
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">蠟雕</span>
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">AI / PS</span>
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">PROCERATE</span>
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">水彩 / 粉彩</span>
+                            <span class="px-3 py-1 border border-gray-800 text-xs text-gray-400">毛筆書法</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Experience Section -->
+    <section id="experience" class="py-24 md:py-32 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-12 gap-12">
+                <div class="md:col-span-4">
+                    <h2 class="text-xs tracking-[0.3em] text-gray-500 mb-4 reveal-text">EXPERIENCE</h2>
+                    <div class="w-12 h-px bg-white mb-8 reveal-text"></div>
+                </div>
+                
+                <div class="md:col-span-8 space-y-12">
+                    <!-- Work Experience -->
+                    <div class="reveal-text">
+                        <h3 class="text-lg serif mb-6 text-gray-300">工作經歷 / WORK EXPERIENCE</h3>
+                        
+                        <div class="timeline-item pb-8">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-base font-medium">泉州發展集團</h4>
+                                <span class="text-xs text-gray-500">2023.07 - 2024.07</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">設計實習生</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                負責「泉州禮物」文創產品設計，參與品牌視覺規劃與產品開發。
+                            </p>
+                        </div>
+                        
+                        <div class="timeline-item pb-8">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-base font-medium">台灣珠寶設計師協會</h4>
+                                <span class="text-xs text-gray-500">2023.01 - 至今</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">第七屆會員</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                專業珠寶設計師認證會員，參與協會展覽與交流活動。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Education -->
+                    <div class="reveal-text">
+                        <h3 class="text-lg serif mb-6 text-gray-300">教育背景 / EDUCATION</h3>
+                        
+                        <div class="timeline-item pb-8">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-base font-medium">輔仁大學 Fu Jen Catholic University</h4>
+                                <span class="text-xs text-gray-500">2019 - 2023</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-2">應用美術系金工組 | 藝術學士</p>
+                            <p class="text-xs text-gray-500 leading-relaxed">
+                                主修金屬工藝與珠寶設計，畢業製作《變·態》探討環境議題與生物多樣性。
+                            </p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-base font-medium">福建省泉州市實驗中學</h4>
+                                <span class="text-xs text-gray-500">2013 - 2019</span>
+                            </div>
+                            <p class="text-sm text-gray-400">高中部</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Activities -->
+                    <div class="reveal-text">
+                        <h3 class="text-lg serif mb-6 text-gray-300">課外活動 / ACTIVITIES</h3>
+                        <div class="grid md:grid-cols-2 gap-4 text-xs text-gray-400">
+                            <div class="border-l border-gray-800 pl-4">
+                                <p class="text-white mb-1">輔遊探奇志工團</p>
+                                <p>2019-2023 美宣組組長</p>
+                            </div>
+                            <div class="border-l border-gray-800 pl-4">
+                                <p class="text-white mb-1">淨心堂壁畫修復</p>
+                                <p>2022年協助修復一樓大廳壁畫</p>
+                            </div>
+                            <div class="border-l border-gray-800 pl-4">
+                                <p class="text-white mb-1">台北最HIGH新年城</p>
+                                <p>2020 活動藝術副總監</p>
+                            </div>
+                            <div class="border-l border-gray-800 pl-4">
+                                <p class="text-white mb-1">志工特殊教育訓練</p>
+                                <p>2021 專業培訓課程</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Awards Section -->
+    <section id="awards" class="py-24 md:py-32 px-6 md:px-12 bg-neutral-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-12 gap-12">
+                <div class="md:col-span-4">
+                    <h2 class="text-xs tracking-[0.3em] text-gray-500 mb-4 reveal-text">AWARDS</h2>
+                    <div class="w-12 h-px bg-white mb-8 reveal-text"></div>
+                    <p class="text-sm text-gray-400 leading-relaxed reveal-text">
+                        榮獲多項國內外設計競賽肯定，作品涵蓋珠寶設計、金工創作與視覺藝術等領域。
+                    </p>
+                </div>
+                
+                <div class="md:col-span-8 grid gap-4">
+                    <div class="award-card p-6 reveal-text">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-base font-medium">第十五屆福爾摩沙珠寶設計競賽</h3>
+                            <span class="text-xs text-gray-500">2021</span>
+                        </div>
+                        <p class="text-2xl serif text-gray-300 mb-2">金鵲獎 Golden Magpie Award</p>
+                        <p class="text-xs text-gray-500">作品《車車轟轟》以台灣機車文化為主題，獲得金鵲獎肯定</p>
+                    </div>
+                    
+                    <div class="award-card p-6 reveal-text">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-base font-medium">金點新秀設計獎</h3>
+                            <span class="text-xs text-gray-500">2023</span>
+                        </div>
+                        <p class="text-lg serif text-gray-300 mb-2">入圍「金點新秀贊助特別獎」</p>
+                        <p class="text-xs text-gray-500">畢業製作《變·態》入圍年度設計新秀</p>
+                    </div>
+                    
+                    <div class="award-card p-6 reveal-text">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-base font-medium">輔仁大學應用美術系師生聯展</h3>
+                            <span class="text-xs text-gray-500">2021</span>
+                        </div>
+                        <p class="text-lg serif text-gray-300 mb-2">佳作獎 Outstanding Design Award</p>
+                    </div>
+                    
+                    <div class="award-card p-6 reveal-text">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-base font-medium">輔仁輔人，六十有成</h3>
+                            <span class="text-xs text-gray-500">2021</span>
+                        </div>
+                        <p class="text-lg serif text-gray-300 mb-2">藝能體育楷模 Arts and Sports Model</p>
+                        <p class="text-xs text-gray-500">學生優異暨特殊表現傑出楷模徵選</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-24 md:py-32 px-6 md:px-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16">
+                <h2 class="text-xs tracking-[0.3em] text-gray-500 mb-4 reveal-text">PORTFOLIO</h2>
+                <div class="w-12 h-px bg-white mb-8 reveal-text"></div>
+                <h3 class="text-3xl md:text-4xl serif font-light reveal-text">
+                    精選作品<br>
+                    <span class="text-gray-500 text-xl">Selected Works</span>
+                </h3>
+            </div>
+            
+            <!-- Filter Tabs -->
+            <div class="flex gap-6 mb-12 text-xs tracking-widest reveal-text border-b border-gray-800 pb-4 overflow-x-auto">
+                <button onclick="filterWorks('all')" class="filter-btn text-white border-b border-white pb-4 -mb-4" data-filter="all">ALL</button>
+                <button onclick="filterWorks('jewelry')" class="filter-btn text-gray-500 hover:text-white transition-colors pb-4 -mb-4" data-filter="jewelry">JEWELRY</button>
+                <button onclick="filterWorks('painting')" class="filter-btn text-gray-500 hover:text-white transition-colors pb-4 -mb-4" data-filter="painting">PAINTING</button>
+                <button onclick="filterWorks('metalwork')" class="filter-btn text-gray-500 hover:text-white transition-colors pb-4 -mb-4" data-filter="metalwork">METALWORK</button>
+            </div>
+            
+            <!-- Gallery Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="gallery">
+                <!-- Compiltime -->
+                <div class="work-item group" data-category="jewelry">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop" 
+                             alt="Compiltime" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2023 畢業製作</p>
+                                <h4 class="text-lg serif">變·態 Compiltime</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">變·態 Compiltime</h4>
+                    <p class="text-xs text-gray-500">鈦金屬、皮革彩繪 | 環境議題概念首飾</p>
+                </div>
+                
+                <!-- Motorcycle -->
+                <div class="work-item group" data-category="jewelry">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop" 
+                             alt="Motorcycle" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2021 金鵲獎</p>
+                                <h4 class="text-lg serif">車車轟轟</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">車車轟轟</h4>
+                    <p class="text-xs text-gray-500">白金、翡翠、鑽石 | 機車造型戒指</p>
+                </div>
+                
+                <!-- Dunhuang -->
+                <div class="work-item group" data-category="jewelry">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop" 
+                             alt="Dunhuang" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2021</p>
+                                <h4 class="text-lg serif">敦煌 Dunhuang</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">敦煌 Dunhuang</h4>
+                    <p class="text-xs text-gray-500">珠寶手繪 | 敦煌壁畫靈感項鍊設計</p>
+                </div>
+                
+                <!-- Heart Series -->
+                <div class="work-item group" data-category="metalwork">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1615655406736-b37c4fabf923?q=80&w=800&auto=format&fit=crop" 
+                             alt="Heart Series" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2022</p>
+                                <h4 class="text-lg serif">臟·系列</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">臟·系列</h4>
+                    <p class="text-xs text-gray-500">琺瑯、蠟雕 | 心臟意象首飾創作</p>
+                </div>
+                
+                <!-- Skeleton -->
+                <div class="work-item group" data-category="metalwork">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=800&auto=format&fit=crop" 
+                             alt="Skeleton" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2022</p>
+                                <h4 class="text-lg serif">Skeleton with Roses</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">Skeleton with Roses</h4>
+                    <p class="text-xs text-gray-500">蠟雕 | 骷髏與玫瑰戒指</p>
+                </div>
+                
+                <!-- Marmot -->
+                <div class="work-item group" data-category="metalwork">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1560807707-8cc77767d783?q=80&w=800&auto=format&fit=crop" 
+                             alt="Marmot" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2022</p>
+                                <h4 class="text-lg serif">土撥鼠 Marmot</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">土撥鼠 Marmot</h4>
+                    <p class="text-xs text-gray-500">蠟雕 | 首件蠟雕創作</p>
+                </div>
+                
+                <!-- Joker -->
+                <div class="work-item group" data-category="painting">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=800&auto=format&fit=crop" 
+                             alt="Joker" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2019</p>
+                                <h4 class="text-lg serif">Joker</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">Joker</h4>
+                    <p class="text-xs text-gray-500">數位繪圖 | 電影海報重繪</p>
+                </div>
+                
+                <!-- Mom and Dad -->
+                <div class="work-item group" data-category="painting">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop" 
+                             alt="Portrait" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2020</p>
+                                <h4 class="text-lg serif">Mom & Dad</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">Mom & Dad</h4>
+                    <p class="text-xs text-gray-500">彩色鉛筆 | 父母肖像畫</p>
+                </div>
+                
+                <!-- Bumblebee -->
+                <div class="work-item group" data-category="painting">
+                    <div class="img-container aspect-[4/5] bg-gray-900 mb-4">
+                        <img src="https://images.unsplash.com/photo-1594736797933-d0501ba2fe65?q=80&w=800&auto=format&fit=crop" 
+                             alt="Bumblebee" 
+                             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="img-overlay">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">2020</p>
+                                <h4 class="text-lg serif">Bumblebee</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-sm font-medium mb-1">Bumblebee</h4>
+                    <p class="text-xs text-gray-500">彩色鉛筆 | 變形金剛系列</p>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center reveal-text">
+                <a href="#" class="inline-block px-8 py-4 border border-gray-800 text-xs tracking-widest hover:border-white hover:bg-white hover:text-black transition-all duration-300">
+                    VIEW FULL PORTFOLIO PDF ↓
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 md:py-32 px-6 md:px-12 bg-neutral-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-xs tracking-[0.3em] text-gray-500 mb-4 reveal-text">CONTACT</h2>
+                    <div class="w-12 h-px bg-white mb-8 reveal-text"></div>
+                    <h3 class="text-4xl md:text-5xl serif font-light mb-8 reveal-text">
+                        Let's Create<br>
+                        Something Together
+                    </h3>
+                    <p class="text-gray-400 mb-12 max-w-md reveal-text">
+                        期待與您合作，將想法轉化為獨特的藝術作品。
+                        無論是珠寶設計、金工訂製或藝術創作，歡迎聯繫討論。
+                    </p>
+                    
+                    <div class="space-y-6 reveal-text">
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-500 w-20">EMAIL</span>
+                            <a href="mailto:xuhanxi1@gmail.com" class="text-sm hover:text-gray-400 transition-colors">xuhanxi1@gmail.com</a>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-500 w-20">TEL</span>
+                            <a href="tel:+88619959886858" class="text-sm hover:text-gray-400 transition-colors">+886 19959886858</a>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs text-gray-500 w-20">LOCATION</span>
+                            <span class="text-sm">Quanzhou, Fujian / Taipei, Taiwan</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reveal-text">
+                    <form class="space-y-6" onsubmit="event.preventDefault(); alert('感謝您的訊息！我會盡快回覆。');">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-2 tracking-widest">NAME</label>
+                            <input type="text" class="w-full bg-transparent border-b border-gray-800 py-3 text-sm focus:outline-none focus:border-white transition-colors" placeholder="Your Name">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-2 tracking-widest">EMAIL</label>
+                            <input type="email" class="w-full bg-transparent border-b border-gray-800 py-3 text-sm focus:outline-none focus:border-white transition-colors" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-2 tracking-widest">MESSAGE</label>
+                            <textarea rows="4" class="w-full bg-transparent border-b border-gray-800 py-3 text-sm focus:outline-none focus:border-white transition-colors resize-none" placeholder="Tell me about your project..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-4 border border-white text-xs tracking-widest hover:bg-white hover:text-black transition-all duration-300 mt-8">
+                            SEND MESSAGE
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="py-8 px-6 md:px-12 border-t border-gray-900">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-xs text-gray-600 tracking-widest">© 2024 XU HANXI. ALL RIGHTS RESERVED.</p>
+            <div class="flex gap-6 text-xs text-gray-600">
+                <a href="#" class="hover:text-white transition-colors">INSTAGRAM</a>
+                <a href="#" class="hover:text-white transition-colors">BEHANCE</a>
+                <a href="#" class="hover:text-white transition-colors">LINKEDIN</a>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Custom Cursor
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+        
+        // Hover effect for cursor
+        const interactiveElements = document.querySelectorAll('a, button, .work-item');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.classList.add('hover');
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.classList.remove('hover');
+            });
+        });
+        
+        // Scroll Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height);
+            document.getElementById('progressBar').style.transform = `scaleX(${scrolled})`;
+        });
+        
+        // Reveal Animation on Scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.reveal-text').forEach((el) => observer.observe(el));
+        
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            document.querySelector('.mobile-menu').classList.toggle('active');
+        }
+        
+        // Portfolio Filter
+        function filterWorks(category) {
+            const items = document.querySelectorAll('.work-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update buttons
+            buttons.forEach(btn => {
+                if (btn.dataset.filter === category) {
+                    btn.classList.remove('text-gray-500');
+                    btn.classList.add('text-white', 'border-b', 'border-white');
+                } else {
+                    btn.classList.add('text-gray-500');
+                    btn.classList.remove('text-white', 'border-b', 'border-white');
+                }
+            });
+            
+            // Filter items with animation
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, 50);
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Parallax effect for hero images
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('#hero img');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
